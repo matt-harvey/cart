@@ -1,0 +1,3 @@
+create_table("carts") {
+  t.Column("id", "integer", {primary: true})
+}

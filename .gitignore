@@ -1,0 +1,11 @@
+cart
+**/.*.swp
+.ackrc
+vendor/
+data/
+.env
+**/*~
+cart.db
+notes_unversioned.md
+**/*.sqlite
+config/database.yml

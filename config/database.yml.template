@@ -1,0 +1,7 @@
+development:
+  dialect: "sqlite3"
+  database: "/tmp/cart_development.sqlite"
+
+test:
+  dialect: "sqlite3"
+  database: "/tmp/cart_test.sqlite"
