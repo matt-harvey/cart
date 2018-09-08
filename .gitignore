@@ -9,3 +9,4 @@ cart.db
 notes_unversioned.md
 **/*.sqlite
 config/database.yml
+dbseed

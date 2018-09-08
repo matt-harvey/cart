@@ -36,22 +36,30 @@ run: build
 
 .PHONY: dbmigrate
 dbmigrate:
+	echo Migrating databases up
 	soda migrate up && soda migrate -e test up
 
 .PHONY: dbmigratedown
 dbmigratedown:
+	echo Migrating databases down
 	soda migrate down && soda migrate -e test down
 
 .PHONY: dbdrop
 dbdrop:
-	soda drop -a
+	echo Dropping databases
+	soda drop -a && rm -f dbseed
 
 .PHONY: dbcreate
 dbcreate:
+	echo Creating databases
 	soda create -a
 
+dbseed:
+	echo Seeding development database
+	sqlite3 /tmp/cart_development.sqlite < scripts/seed.sql && touch dbseed
+
 .PHONY: dbreset
-dbreset: dbdrop dbcreate dbmigrate
+dbreset: dbdrop dbcreate dbmigrate dbseed
 
 vendor: Gopkg.toml Gopkg.lock
 	echo Installing dependencies
