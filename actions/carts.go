@@ -3,7 +3,6 @@ package actions
 import (
 	"encoding/json"
 	"net/http"
-	"os"
 	"strconv"
 
 	"github.com/go-chi/chi"
@@ -38,9 +37,7 @@ func ShowCart(writer http.ResponseWriter, request *http.Request) {
 		// TODO Handle this
 		Log.Print("DEBUG err: ", err)
 	}
-	Log.Print("DEBUG id: ", id)
 	err = db.Conn().Find(&cart, id)
-	Log.Print("DEBUG os.Getenv(`ENV`): ", os.Getenv("ENV"))
 	if err != nil {
 		// TODO Handle this
 		Log.Print("DEBUG err: ", err)

@@ -22,5 +22,8 @@ func NewRouter() *chi.Mux {
 			router.Get("/", actions.ShowCart)
 		})
 	})
+	router.Route("/cart_items", func(router chi.Router) {
+		router.Post("/", actions.CreateCartItem)
+	})
 	return router
 }
