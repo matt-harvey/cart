@@ -34,6 +34,25 @@ clean:
 run: build
 	./$(BINARY_NAME)
 
+.PHONY: dbmigrate
+dbmigrate:
+	soda migrate up && soda migrate -e test up
+
+.PHONY: dbmigratedown
+dbmigratedown:
+	soda migrate down && soda migrate -e test down
+
+.PHONY: dbdrop
+dbdrop:
+	soda drop -a
+
+.PHONY: dbcreate
+dbcreate:
+	soda create -a
+
+.PHONY: dbreset
+dbreset: dbdrop dbcreate dbmigrate
+
 vendor: Gopkg.toml Gopkg.lock
 	echo Installing dependencies
 	dep ensure
