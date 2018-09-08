@@ -61,7 +61,7 @@ func TestShowCart(t *testing.T) {
 	updatedAt := cart.UpdatedAt.Format(time.RFC3339Nano)
 
 	expectedJSON := fmt.Sprintf(
-		`{"id":%d,"created_at":"%s","updated_at":"%s"}`,
+		`{"id":%d,"created_at":"%s","updated_at":"%s","items":null}`,
 		cartID,
 		createdAt,
 		updatedAt)

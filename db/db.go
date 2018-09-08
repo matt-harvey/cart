@@ -36,6 +36,5 @@ func initializeDb() {
 
 func Conn() *pop.Connection {
 	initializeDbOnce.Do(initializeDb)
-	Log.Print("DEBUG db.URL(): ", db.URL())
 	return db
 }

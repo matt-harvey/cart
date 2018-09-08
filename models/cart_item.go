@@ -14,3 +14,5 @@ type CartItem struct {
 	StandardPriceCents   uint      `json:"standard_price_cents" db:"standard_price_cents"`
 	DiscountedPriceCents uint      `json:"discounted_price_cents" db:"discounted_price_cents"`
 }
+
+type CartItems []CartItem
