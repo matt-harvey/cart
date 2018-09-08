@@ -10,6 +10,7 @@ import (
 
 	"github.com/matt-harvey/cart/db"
 	"github.com/matt-harvey/cart/models"
+	"github.com/matt-harvey/cart/presenters"
 )
 
 // "/cart"
@@ -33,21 +34,19 @@ func CreateCart(writer http.ResponseWriter, request *http.Request) {
 
 // "/cart/{id}"
 func ShowCart(writer http.ResponseWriter, request *http.Request) {
-	cart := models.Cart{}
 	id, err := strconv.Atoi(chi.URLParam(request, "id"))
 	if err != nil {
 		// TODO Handle this
 		Log.Print("DEBUG err: ", err)
 		return
 	}
-	err = db.Conn().Find(&cart, id)
+	cartPresenter, err := presenters.NewCartPresenter(id)
 	if err != nil {
 		// TODO Handle this
 		Log.Print("DEBUG err: ", err)
 		return
 	}
-	// TODO Handle if not found
-	json, err := json.Marshal(cart)
+	json, err := json.Marshal(cartPresenter)
 	if err != nil {
 		// TODO Handle this
 		Log.Print("DEBUG err: ", err)

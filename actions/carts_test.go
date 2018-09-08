@@ -1,13 +1,14 @@
 package actions
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/go-chi/chi"
 
@@ -38,8 +39,41 @@ func TestCreateCart(t *testing.T) {
 }
 
 func TestShowCart(t *testing.T) {
+	conn := db.Conn()
+
+	belts_product := models.Product{Name: "Belts", PriceCents: 2000}
+	conn.Create(&belts_product)
+	trousers_product := models.Product{Name: "Trousers", PriceCents: 7000}
+	conn.Create(&trousers_product)
+
 	cart := models.Cart{}
-	db.Conn().Create(&cart)
+	err := conn.Create(&cart)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	trousersItem := models.CartItem{
+		CartID:               cart.ID,
+		ProductID:            trousers_product.ID,
+		Quantity:             3,
+		StandardPriceCents:   21000,
+		DiscountedPriceCents: 21000,
+	}
+	err = conn.Create(&trousersItem)
+	if err != nil {
+		t.Fatal(err)
+	}
+	beltsItem := models.CartItem{
+		CartID:               cart.ID,
+		ProductID:            belts_product.ID,
+		Quantity:             1,
+		StandardPriceCents:   2000,
+		DiscountedPriceCents: 1700,
+	}
+	err = conn.Create(&beltsItem)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	cartID := cart.ID
 	Log.Print("DEBUG cartID: ", cartID)
@@ -56,16 +90,36 @@ func TestShowCart(t *testing.T) {
 	ctx.URLParams.Add("id", fmt.Sprintf("%d", cartID))
 	request = request.WithContext(context.WithValue(request.Context(), chi.RouteCtxKey, ctx))
 	handler.ServeHTTP(recorder, request)
-	responseBody := recorder.Body.String()
-	createdAt := cart.CreatedAt.Format(time.RFC3339Nano)
-	updatedAt := cart.UpdatedAt.Format(time.RFC3339Nano)
+	responseBody := recorder.Body.Bytes()
+	var indentedResponseBuffer bytes.Buffer
+	err = json.Indent(&indentedResponseBuffer, responseBody, "\t\t", "\t")
+	if err != nil {
+		t.Fatal(err)
+	}
+	indentedResponseBody := indentedResponseBuffer.String()
 
-	expectedJSON := fmt.Sprintf(
-		`{"id":%d,"created_at":"%s","updated_at":"%s","items":null}`,
-		cartID,
-		createdAt,
-		updatedAt)
-	if responseBody != expectedJSON {
-		t.Fatalf(`JSON response expected to be "%s", was "%s"`, expectedJSON, responseBody)
+	expected := fmt.Sprintf(`{
+			"id": %d,
+			"total_price_cents": 22700,
+			"items": [
+				{
+					"product_name": "Trousers",
+					"quantity": 3,
+					"standard_price_cents": 21000,
+					"discount_cents": 0,
+					"discounted_price_cents": 21000
+				},
+				{
+					"product_name": "Belts",
+					"quantity": 1,
+					"standard_price_cents": 2000,
+					"discount_cents": 300,
+					"discounted_price_cents": 1700
+				}
+			]
+		}`, cartID)
+
+	if indentedResponseBody != expected {
+		t.Fatalf(`JSON response expected to be "%s", was "%s"`, expected, indentedResponseBody)
 	}
 }
