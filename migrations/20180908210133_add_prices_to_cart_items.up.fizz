@@ -1,0 +1,2 @@
+add_column("cart_items", "standard_price_cents", "int", {"default": 0})
+add_column("cart_items", "discounted_price_cents", "int", {"default": 0})

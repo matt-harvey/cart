@@ -1,0 +1,2 @@
+drop_column("cart_items", "standard_price_cents")
+drop_column("cart_items", "discounted_price_cents")

@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS "cart_items" (
 "product_id" integer NOT NULL,
 "quantity" uint NOT NULL,
 "created_at" DATETIME NOT NULL,
-"updated_at" DATETIME NOT NULL,
+"updated_at" DATETIME NOT NULL, "standard_price_cents" int NOT NULL DEFAULT '0', "discounted_price_cents" int NOT NULL DEFAULT '0',
 FOREIGN KEY (cart_id) REFERENCES carts (id) ON DELETE cascade,
 FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE cascade
 );
