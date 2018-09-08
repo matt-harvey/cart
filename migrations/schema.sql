@@ -26,3 +26,8 @@ FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE cascade
 );
 CREATE INDEX "cart_items_cart_id_idx" ON "cart_items" (cart_id);
 CREATE INDEX "cart_items_product_id_idx" ON "cart_items" (product_id);
+CREATE TABLE IF NOT EXISTS "transactions" (
+"id" INTEGER PRIMARY KEY AUTOINCREMENT,
+"created_at" DATETIME NOT NULL,
+"updated_at" DATETIME NOT NULL
+);

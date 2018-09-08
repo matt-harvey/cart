@@ -1,0 +1,3 @@
+create_table("transactions") {
+	t.Column("id", "integer", {"primary": true})
+}
