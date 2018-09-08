@@ -31,3 +31,15 @@ CREATE TABLE IF NOT EXISTS "transactions" (
 "created_at" DATETIME NOT NULL,
 "updated_at" DATETIME NOT NULL
 );
+CREATE TABLE IF NOT EXISTS "stock_entries" (
+"id" INTEGER PRIMARY KEY AUTOINCREMENT,
+"transaction_id" integer NOT NULL,
+"product_id" integer NOT NULL,
+"quantity" integer NOT NULL,
+"created_at" DATETIME NOT NULL,
+"updated_at" DATETIME NOT NULL,
+FOREIGN KEY (transaction_id) REFERENCES transactions (id) ON DELETE cascade,
+FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE cascade
+);
+CREATE INDEX "stock_entries_transaction_id_idx" ON "stock_entries" (transaction_id);
+CREATE INDEX "stock_entries_product_id_idx" ON "stock_entries" (product_id);
