@@ -1,0 +1,10 @@
+create_table("cart_items") {
+	t.Column("id", "integer", {"primary": true})
+	t.Column("cart_id", "integer", {})
+	t.Column("product_id", "integer", {})
+	t.Column("quantity", "uint", {})
+	t.ForeignKey("cart_id", {"carts": ["id"]}, {"on_delete": "cascade"})
+	t.ForeignKey("product_id", {"products": ["id"]}, {"on_delete": "cascade"})
+}
+add_index("cart_items", "cart_id", {})
+add_index("cart_items", "product_id", {})
