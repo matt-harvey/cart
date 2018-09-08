@@ -1,0 +1,1 @@
+add_column("products", "price_cents", "int", {"default": 0})

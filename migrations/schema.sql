@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS "products" (
 "name" TEXT NOT NULL,
 "created_at" DATETIME NOT NULL,
 "updated_at" DATETIME NOT NULL
-);
+, "price_cents" int NOT NULL DEFAULT '0');
 CREATE TABLE IF NOT EXISTS "cart_items" (
 "id" INTEGER PRIMARY KEY AUTOINCREMENT,
 "cart_id" integer NOT NULL,
