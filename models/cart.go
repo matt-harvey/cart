@@ -33,7 +33,7 @@ func (c *Cart) QualifiesFor(promotion Promotion) (bool, error) {
 // ApplyPricing calculates which Promotions apply to this cart, and sets the StandardPriceCents and
 // DiscountedPriceCents of its contained Items accordingly. This assumes Items have already been
 // persisted, and will load them into memory from the database if they haven't been loaded already.
-// NOTE This method does *not* persist the Items after their pricing is mutated?
+// NOTE This method does *not* persist the Items after their pricing is mutated.
 func (c *Cart) ApplyPricing() error {
 	err := db.Conn().Eager("Items.Product").Find(c, c.ID)
 	if err != nil {

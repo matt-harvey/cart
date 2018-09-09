@@ -10,3 +10,4 @@ notes_unversioned.md
 **/*.sqlite
 config/database.yml
 dbseed
+scratch*
