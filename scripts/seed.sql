@@ -134,7 +134,7 @@ VALUES
     time('now'),
     (SELECT id FROM products WHERE name = 'Shirts'),
     2,
-    "FixedDiscount",
+    "PinnedDiscount",
     1
   ),
   (

@@ -1,6 +1,6 @@
 package models
 
-import "errors"
+import "fmt"
 
 type Discount interface {
 
@@ -21,7 +21,7 @@ func getDiscount(discountType string, discountID int) (Discount, error) {
 	discountFactory, ok := discountFactories[discountType]
 	if !ok {
 		// TODO Better errors
-		return nil, errors.New("Discount factory not found for discount type")
+		return nil, fmt.Errorf("Discount factory not found for discount type %s", discountType)
 	}
 	return discountFactory(discountID)
 }
