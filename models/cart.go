@@ -73,6 +73,16 @@ func (c *Cart) ApplyPricing() error {
 		if err != nil {
 			return err
 		}
+		// Units of Product that go towards qualifying the Cart for the Promotion
+		// should not themselves be subject to the discount. For example, if you need
+		// to buy 2 shirts to qualify for a given discount on shirts, then those first
+		// two shirts that you buy should not themselves be discounted.
+		// If the discounted Product is the same as the required Product, then
+		// we'll decrement unaffectedUnits as the discount is applied to quantities of
+		// the Promotion's "required Product", and only start applying the discount
+		// once that has been "consumed" down to zero.
+		unaffectedUnits := promotion.RequiredProductQuantity
+
 		var discountedProductIDs []int
 		// TODO This probably belongs in Promotion model.
 		// TODO Should also filter to only find promotion_discounted_products where their
@@ -89,10 +99,23 @@ func (c *Cart) ApplyPricing() error {
 		for _, discountedProductID := range discountedProductIDs {
 			for i, item := range c.Items {
 				if item.ProductID == discountedProductID {
-					// FIXME Avoid applying it if it's one of the required items (e.g. if
-					// every pair of socks after the second one is half-price, then we need
-					// to respect the "after" part of that).
-					c.Items[i].ApplyDiscount(discount)
+					if item.ProductID == promotion.RequiredProductID {
+						// Discounted and required Product are the same; so we
+						// need to "consume" unaffectedUnits before applying
+						// discount.
+						unitsToDiscount := uint(0)
+						if item.Quantity > unaffectedUnits {
+							unitsToDiscount = item.Quantity - unaffectedUnits
+							unaffectedUnits = 0
+						} else {
+							unaffectedUnits -= item.Quantity
+						}
+						if unitsToDiscount > 0 {
+							c.Items[i].ApplyDiscount(discount, unitsToDiscount)
+						}
+					} else {
+						c.Items[i].ApplyDiscount(discount, c.Items[i].Quantity)
+					}
 				}
 			}
 		}

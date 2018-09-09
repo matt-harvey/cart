@@ -21,9 +21,18 @@ type CartItem struct {
 type CartItems []CartItem
 
 // ApplyDiscount assumes Quantity and StandardPriceCents have already been set. It then
-// sets DiscountedPriceCents on that basis, by applying the passed Discount.
-func (ci *CartItem) ApplyDiscount(discount Discount) {
+// sets DiscountedPriceCents on that basis, by applying the passed Discount to the
+// quantity of the CartItem given by discountedQuantity. For example, if buying
+// 3 shirts gets you the 4th one at half price, then the discountedQuantity will
+// only be 1, not 3. Any excess of discountedQuantity over ci.Quantity is ignored
+// in the calculation.
+func (ci *CartItem) ApplyDiscount(discount Discount, discountedQuantity uint) {
+	if discountedQuantity >= ci.Quantity {
+		discountedQuantity = ci.Quantity
+	}
 	standardPriceCentsPerUnit := ci.StandardPriceCents / ci.Quantity
 	discountedPriceCentsPerUnit := discount.Apply(standardPriceCentsPerUnit)
-	ci.DiscountedPriceCents = ci.Quantity * discountedPriceCentsPerUnit
+	nonDiscountedQuantity := ci.Quantity - discountedQuantity
+	ci.DiscountedPriceCents = discountedQuantity*discountedPriceCentsPerUnit +
+		nonDiscountedQuantity*standardPriceCentsPerUnit
 }

@@ -66,7 +66,9 @@ follows:
 `curl http://localhost:3000/carts/1`
 
 This should output a JSON representation of the currently seeded cart, which should contain
-3 trousers and 1 belt, with the belt subject to a 15% discount.
+3 trousers and 1 belt, with the belt subject to a 15% discount. Note prices are calculated in
+cents (to avoid issues around base-2 floating point arithetic); and the price for each
+"item" in the cart represents to total price for all products of that type in the cart.
 
 ##### Add various items to the cart
 
@@ -77,7 +79,7 @@ curl -X PATCH -H 'Content-Type: application/json' -d '{"product_id":1,"quantity"
 ```
 
 If you now run `curl http://localhost:3000/carts/1`, you should see that 2 shirts, 2 ties and a
-extra belt have been added to the existing cart. Note that the ties are not yet subject to a
+extra belt have been added to the existing cart. Note that the ties and shirts are not yet subject to a
 discount.
 
 Now add another shirt:
@@ -87,7 +89,8 @@ curl -X PATCH -H 'Content-Type: application/json' -d '{"product_id":2,"quantity"
 ```
 
 Now run `curl http://localhost:3000/carts/1` again, and notice that a 50% discount has now been
-applied to the ties, in virtue of 3 shirts now being included in the cart.
+applied to the ties, in virtue of 3 shirts now being included in the cart; and that the third shirt,
+moreover, is now discounted to $45 ("4500 cents").
 
 ##### Remove items from the cart
 
