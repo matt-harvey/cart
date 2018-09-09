@@ -142,6 +142,7 @@ func TestShowCart(t *testing.T) {
 			"total_price_cents": 22700,
 			"items": [
 				{
+					"product_id": %d,
 					"product_name": "Trousers",
 					"quantity": 3,
 					"standard_price_cents": 21000,
@@ -149,6 +150,7 @@ func TestShowCart(t *testing.T) {
 					"discounted_price_cents": 21000
 				},
 				{
+					"product_id": %d,
 					"product_name": "Belts",
 					"quantity": 1,
 					"standard_price_cents": 2000,
@@ -156,7 +158,7 @@ func TestShowCart(t *testing.T) {
 					"discounted_price_cents": 1700
 				}
 			]
-		}`, cartID)
+		}`, cartID, trousers.ID, belts.ID)
 
 	if indentedResponseBody != expected {
 		t.Fatalf(`JSON response expected to be "%s", was "%s"`, expected, indentedResponseBody)

@@ -40,6 +40,7 @@ func NewCartPresenter(cartID int) (*CartPresenter, error) {
 			cartPresenter.Items[pos].DiscountedPriceCents += cartItem.DiscountedPriceCents
 		} else {
 			cartItemPresenter := CartItemPresenter{
+				ProductID:            cartItem.Product.ID,
 				ProductName:          cartItem.Product.Name,
 				Quantity:             cartItem.Quantity,
 				StandardPriceCents:   cartItem.StandardPriceCents,
