@@ -9,10 +9,6 @@ import (
 type Promotion struct {
 	ID int `json:"id" db:"id"`
 
-	// Label should be a unique, human-readable label for identifying this promotion
-	// within the business.
-	Label string `json:"label" db:"label"`
-
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 

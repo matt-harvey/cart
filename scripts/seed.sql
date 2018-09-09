@@ -110,7 +110,7 @@ VALUES
 
 INSERT INTO promotions
   (
-    label,
+    id,
     created_at,
     updated_at,
     required_product_id,
@@ -120,7 +120,7 @@ INSERT INTO promotions
   )
 VALUES
   (
-    'trousers_belts_shoes',
+    1,
     time('now'),
     time('now'),
     (SELECT id FROM products WHERE name = 'Trousers'),
@@ -129,7 +129,7 @@ VALUES
     1
   ),
   (
-    'shirts_45',
+    2,
     time('now'),
     time('now'),
     (SELECT id FROM products WHERE name = 'Shirts'),
@@ -138,7 +138,7 @@ VALUES
     1
   ),
   (
-    'shirts_ties',
+    3,
     time('now'),
     time('now'),
     (SELECT id FROM products WHERE name = 'Shirts'),
@@ -158,24 +158,24 @@ VALUES
   (
     time('now'),
     time('now'),
-    (SELECT id FROM promotions WHERE label = 'trousers_belts_shoes'),
+    (SELECT id FROM promotions WHERE id = 1),
     (SELECT id FROM products WHERE name = 'Belts')
   ),
   (
     time('now'),
     time('now'),
-    (SELECT id FROM promotions WHERE label = 'trousers_belts_shoes'),
+    (SELECT id FROM promotions WHERE id = 1),
     (SELECT id FROM products WHERE name = 'Shoes')
   ),
   (
     time('now'),
     time('now'),
-    (SELECT id FROM promotions WHERE label = 'shirts_45'),
+    (SELECT id FROM promotions WHERE id = 2),
     (SELECT id FROM products WHERE name = 'Shirts')
   ),
   (
     time('now'),
     time('now'),
-    (SELECT id FROM promotions WHERE label = 'shirts_ties'),
+    (SELECT id FROM promotions WHERE id = 3),
     (SELECT id FROM products WHERE name = 'Ties')
   );

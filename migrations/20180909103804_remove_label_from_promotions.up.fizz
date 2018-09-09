@@ -1,0 +1,2 @@
+drop_index("promotions", "promotions_label_idx")
+drop_column("promotions", "label")

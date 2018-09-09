@@ -1,0 +1,2 @@
+add_column("cart_items", "label", "string", {})
+add_index("cart_items", "label", {"unique": true})
