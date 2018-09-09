@@ -58,7 +58,7 @@ func TestShowCart(t *testing.T) {
 	trousersItem := models.CartItem{
 		CartID:    cart.ID,
 		ProductID: trousers.ID,
-		Quantity:  3,
+		Quantity:  1,
 	}
 	err = conn.Create(&trousersItem)
 	if err != nil {
@@ -70,6 +70,17 @@ func TestShowCart(t *testing.T) {
 		Quantity:  1,
 	}
 	err = conn.Create(&beltsItem)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// We set up two trousers items, to confirm that the quantities in separate
+	// Items are merged per Product when we show the Cart as a whole.
+	otherTrousersItem := models.CartItem{
+		CartID:    cart.ID,
+		ProductID: trousers.ID,
+		Quantity:  2,
+	}
+	err = conn.Create(&otherTrousersItem)
 	if err != nil {
 		t.Fatal(err)
 	}
