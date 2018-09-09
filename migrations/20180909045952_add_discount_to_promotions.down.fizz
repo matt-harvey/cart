@@ -1,0 +1,3 @@
+drop_index("promotions", "index_promotions_on_discount_type_discount_id")
+drop_column("promotions", "discount_type")
+drop_column("promotions", "discount_id")

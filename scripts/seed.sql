@@ -2,14 +2,14 @@
 -- initial data set.
 
 INSERT INTO products
-  (created_at,  updated_at,  name,       price_cents)
+  (created_at, updated_at, name, price_cents)
 VALUES
-  (time('now'), time('now'), 'Belts',    2000),
-  (time('now'), time('now'), 'Shirts',   6000),
-  (time('now'), time('now'), 'Suits',    30000),
+  (time('now'), time('now'), 'Belts', 2000),
+  (time('now'), time('now'), 'Shirts', 6000),
+  (time('now'), time('now'), 'Suits', 30000),
   (time('now'), time('now'), 'Trousers', 7000),
-  (time('now'), time('now'), 'Shoes',    12000),
-  (time('now'), time('now'), 'Ties',     2000);
+  (time('now'), time('now'), 'Shoes', 12000),
+  (time('now'), time('now'), 'Ties', 2000);
 
 INSERT INTO transactions (created_at, updated_at) VALUES (time('now'), time('now'));
 
@@ -97,13 +97,26 @@ VALUES
     1700
   );
 
+INSERT INTO percentage_discounts
+  (id, created_at, updated_at, amount)
+VALUES
+  (1, time('now'), time('now'), 0.15),
+  (2, time('now'), time('now'), 0.5);
+
+INSERT INTO pinned_discounts
+  (id, created_at, updated_at, amount_cents)
+VALUES
+  (1, time('now'), time('now'), 4500);
+
 INSERT INTO promotions
   (
     label,
     created_at,
     updated_at,
     required_product_id,
-    required_product_quantity
+    required_product_quantity,
+    discount_type,
+    discount_id
   )
 VALUES
   (
@@ -111,21 +124,27 @@ VALUES
     time('now'),
     time('now'),
     (SELECT id FROM products WHERE name = 'Trousers'),
-    2
+    2,
+    "PercentageDiscount",
+    1
   ),
   (
     'shirts_45',
     time('now'),
     time('now'),
     (SELECT id FROM products WHERE name = 'Shirts'),
-    2
+    2,
+    "FixedDiscount",
+    1
   ),
   (
     'shirts_ties',
     time('now'),
     time('now'),
     (SELECT id FROM products WHERE name = 'Shirts'),
-    3
+    3,
+    "PercentageDiscount",
+    2
   );
 
 

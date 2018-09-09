@@ -1,0 +1,4 @@
+create_table("percentage_discounts") {
+	t.Column("id", "integer", {"primary": true})
+	t.Column("amount", "decimal", {})
+}

@@ -49,8 +49,21 @@ CREATE TABLE IF NOT EXISTS "promotions" (
 "required_product_id" integer NOT NULL,
 "required_product_quantity" uint NOT NULL,
 "created_at" DATETIME NOT NULL,
-"updated_at" DATETIME NOT NULL,
+"updated_at" DATETIME NOT NULL, "discount_type" TEXT, "discount_id" integer,
 FOREIGN KEY (required_product_id) REFERENCES products (id) ON DELETE cascade
 );
 CREATE UNIQUE INDEX "promotions_label_idx" ON "promotions" (label);
 CREATE INDEX "promotions_required_product_id_idx" ON "promotions" (required_product_id);
+CREATE TABLE IF NOT EXISTS "percentage_discounts" (
+"id" INTEGER PRIMARY KEY AUTOINCREMENT,
+"amount" decimal NOT NULL,
+"created_at" DATETIME NOT NULL,
+"updated_at" DATETIME NOT NULL
+);
+CREATE TABLE IF NOT EXISTS "pinned_discounts" (
+"id" INTEGER PRIMARY KEY AUTOINCREMENT,
+"amount_cents" uint NOT NULL,
+"created_at" DATETIME NOT NULL,
+"updated_at" DATETIME NOT NULL
+);
+CREATE INDEX "index_promotions_on_discount_type_discount_id" ON "promotions" (discount_type, discount_id);

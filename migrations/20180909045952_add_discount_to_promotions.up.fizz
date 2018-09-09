@@ -1,0 +1,3 @@
+add_column("promotions", "discount_type", "string", {"null": false})
+add_column("promotions", "discount_id", "integer", {"null": false})
+add_index("promotions", ["discount_type", "discount_id"], {"name": "index_promotions_on_discount_type_discount_id"})
