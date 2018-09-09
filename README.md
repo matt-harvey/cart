@@ -18,6 +18,7 @@ To run this application, you will need:
   go get -u -v -tags sqlite github.com/gobuffalo/pop/...
   go install -tags sqlite github.com/gobuffalo/pop/soda
   ```
+* The [dep](https://github.com/golang/dep) dependency management tool for Go.
 
 ### Installation
 
