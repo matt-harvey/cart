@@ -147,6 +147,35 @@ VALUES
     2
   );
 
-
-
-
+INSERT INTO promotion_discounted_products
+  (
+    created_at,
+    updated_at,
+    promotion_id,
+    product_id
+  )
+VALUES
+  (
+    time('now'),
+    time('now'),
+    (SELECT id FROM promotions WHERE label = 'trousers_belts_shoes'),
+    (SELECT id FROM products WHERE name = 'Belts')
+  ),
+  (
+    time('now'),
+    time('now'),
+    (SELECT id FROM promotions WHERE label = 'trousers_belts_shoes'),
+    (SELECT id FROM products WHERE name = 'Shoes')
+  ),
+  (
+    time('now'),
+    time('now'),
+    (SELECT id FROM promotions WHERE label = 'shirts_45'),
+    (SELECT id FROM products WHERE name = 'Shirts')
+  ),
+  (
+    time('now'),
+    time('now'),
+    (SELECT id FROM promotions WHERE label = 'shirts_ties'),
+    (SELECT id FROM products WHERE name = 'Ties')
+  );

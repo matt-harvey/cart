@@ -1,0 +1,9 @@
+create_table("promotion_discounted_products") {
+	t.Column("id", "integer", {"primary": true})
+	t.Column("product_id", "integer", {})
+	t.Column("promotion_id", "integer", {})
+	t.ForeignKey("product_id", {"products": ["id"]}, {"on_delete": "cascade"})
+	t.ForeignKey("promotion_id", {"promotions": ["id"]}, {"on_delete": "cascade"})
+}
+add_index("promotion_discounted_products", "product_id", {})
+add_index("promotion_discounted_products", "promotion_id", {})

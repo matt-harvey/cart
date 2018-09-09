@@ -67,3 +67,14 @@ CREATE TABLE IF NOT EXISTS "pinned_discounts" (
 "updated_at" DATETIME NOT NULL
 );
 CREATE INDEX "index_promotions_on_discount_type_discount_id" ON "promotions" (discount_type, discount_id);
+CREATE TABLE IF NOT EXISTS "promotion_discounted_products" (
+"id" INTEGER PRIMARY KEY AUTOINCREMENT,
+"product_id" integer NOT NULL,
+"promotion_id" integer NOT NULL,
+"created_at" DATETIME NOT NULL,
+"updated_at" DATETIME NOT NULL,
+FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE cascade,
+FOREIGN KEY (promotion_id) REFERENCES promotions (id) ON DELETE cascade
+);
+CREATE INDEX "promotion_discounted_products_product_id_idx" ON "promotion_discounted_products" (product_id);
+CREATE INDEX "promotion_discounted_products_promotion_id_idx" ON "promotion_discounted_products" (promotion_id);
