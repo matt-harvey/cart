@@ -12,5 +12,5 @@ type Product struct {
 	CreatedAt  time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at" db:"updated_at"`
 	Name       string    `json:"name" db:"name"`
-	PriceCents int       `json:"price_cents" db:"price_cents"`
+	PriceCents int       `json:"price_cents" db:"price_cents"` // TODO Should be uint
 }

@@ -5,15 +5,25 @@ import (
 )
 
 type CartItem struct {
-	ID                   int       `json:"id" db:"id"`
-	CreatedAt            time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt            time.Time `json:"updated_at" db:"updated_at"`
-	CartID               int       `json:"cart_id" db:"cart_id"`
-	ProductID            int       `json:"product_id" db:"product_id"`
-	Product              Product   `json:"product" belongs_to:"product"`
-	Quantity             uint      `json:"quantity" db:"quantity"`
-	StandardPriceCents   uint      `json:"standard_price_cents" db:"standard_price_cents"`
-	DiscountedPriceCents uint      `json:"discounted_price_cents" db:"discounted_price_cents"`
+	ID        int       `json:"id" db:"id"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
+	CartID    int       `json:"cart_id" db:"cart_id"`
+	ProductID int       `json:"product_id" db:"product_id"`
+	Product   Product   `json:"product" belongs_to:"product"`
+	Quantity  uint      `json:"quantity" db:"quantity"`
+
+	// These are total prices for this CartItem, not prices per unit.
+	StandardPriceCents   uint `json:"standard_price_cents" db:"standard_price_cents"`
+	DiscountedPriceCents uint `json:"discounted_price_cents" db:"discounted_price_cents"`
 }
 
 type CartItems []CartItem
+
+// ApplyDiscount assumes Quantity and StandardPriceCents have already been set. It then
+// sets DiscountedPriceCents on that basis, by applying the passed Discount.
+func (ci *CartItem) ApplyDiscount(discount Discount) {
+	standardPriceCentsPerUnit := ci.StandardPriceCents / ci.Quantity
+	discountedPriceCentsPerUnit := discount.Apply(standardPriceCentsPerUnit)
+	ci.DiscountedPriceCents = ci.Quantity * discountedPriceCentsPerUnit
+}

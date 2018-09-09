@@ -41,36 +41,64 @@ func TestCreateCart(t *testing.T) {
 func TestShowCart(t *testing.T) {
 	conn := db.Conn()
 
-	belts_product := models.Product{Name: "Belts", PriceCents: 2000}
-	conn.Create(&belts_product)
-	trousers_product := models.Product{Name: "Trousers", PriceCents: 7000}
-	conn.Create(&trousers_product)
-
+	// Initial creation of Cart
 	cart := models.Cart{}
 	err := conn.Create(&cart)
 	if err != nil {
 		t.Fatal(err)
 	}
 
+	// Set up Products
+	belts := models.Product{Name: "Belts", PriceCents: 2000}
+	conn.Create(&belts)
+	trousers := models.Product{Name: "Trousers", PriceCents: 7000}
+	conn.Create(&trousers)
+
+	// Set up CartItems
 	trousersItem := models.CartItem{
-		CartID:               cart.ID,
-		ProductID:            trousers_product.ID,
-		Quantity:             3,
-		StandardPriceCents:   21000,
-		DiscountedPriceCents: 21000,
+		CartID:    cart.ID,
+		ProductID: trousers.ID,
+		Quantity:  3,
 	}
 	err = conn.Create(&trousersItem)
 	if err != nil {
 		t.Fatal(err)
 	}
 	beltsItem := models.CartItem{
-		CartID:               cart.ID,
-		ProductID:            belts_product.ID,
-		Quantity:             1,
-		StandardPriceCents:   2000,
-		DiscountedPriceCents: 1700,
+		CartID:    cart.ID,
+		ProductID: belts.ID,
+		Quantity:  1,
 	}
 	err = conn.Create(&beltsItem)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Set up Discounts
+	fifteenPercentOff := models.PercentageDiscount{Amount: 0.15}
+	err = conn.Create(&fifteenPercentOff)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Set up qualifying Promotion -- buy two trousers, get 15% off belts
+	trousersPromotion := models.Promotion{
+		RequiredProductID:       trousers.ID,
+		RequiredProductQuantity: 2,
+		DiscountType:            models.PERCENTAGE_DISCOUNT_TYPE,
+		DiscountID:              fifteenPercentOff.ID,
+	}
+	err = conn.Create(&trousersPromotion)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Set up PromotionDiscountedProducts
+	discountOnBelts := models.PromotionDiscountedProduct{
+		PromotionID: trousersPromotion.ID,
+		ProductID:   belts.ID,
+	}
+	err = conn.Create(&discountOnBelts)
 	if err != nil {
 		t.Fatal(err)
 	}

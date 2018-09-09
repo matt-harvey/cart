@@ -5,7 +5,7 @@ import (
 )
 
 // Promotion represents a particular discount scheme applicable to certain combinations
-// or products.
+// of Products.
 type Promotion struct {
 	ID int `json:"id" db:"id"`
 

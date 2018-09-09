@@ -32,6 +32,8 @@ func init() {
 	})
 }
 
-func (d *PercentageDiscount) Apply(priceCents uint) uint {
-	return priceCents - uint(math.Round(d.Amount*float64(priceCents)))
+// Apply takes the price for a single unit of a Product, and returns the price that
+// unit would have were this PinnedDiscount applied.
+func (d *PercentageDiscount) Apply(unitPriceCents uint) uint {
+	return unitPriceCents - uint(math.Round(d.Amount*float64(unitPriceCents)))
 }

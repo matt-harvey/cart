@@ -4,8 +4,8 @@ import (
 	"time"
 )
 
-// PromotionDiscountedProduct represents the applicability of a given Promotion's Discount to a given
-// Product. In other words, if a Cart qualifies for a Promotion, then the PromotionDiscountedProducts
+// PromotionDiscountedProduct represents the fact that a given Promotion's Discount is applicable to a
+// given Product. In other words, if a Cart qualifies for a Promotion, then the PromotionDiscountedProducts
 // linked to this Promotion determine which Products appearing as CartItems in the Cart
 // will have their prices modified by the Discount linked to this Promotion.
 type PromotionDiscountedProduct struct {

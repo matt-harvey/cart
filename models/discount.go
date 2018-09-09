@@ -4,7 +4,8 @@ import "errors"
 
 type Discount interface {
 
-	// Apply accepts a given price and returns a new, discounted price.
+	// Apply takes the price for a single unit of a Product, and returns the price that
+	// unit would have were this Discount applied.
 	Apply(priceCents uint) uint
 }
 

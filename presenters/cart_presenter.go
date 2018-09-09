@@ -16,7 +16,11 @@ func NewCartPresenter(cartID int) (*CartPresenter, error) {
 	cart := models.Cart{}
 	err := db.Conn().Eager("Items.Product").Find(&cart, cartID)
 	if err != nil {
-		return &CartPresenter{}, err
+		return nil, err
+	}
+	err = cart.ApplyPricing()
+	if err != nil {
+		return nil, err
 	}
 	for _, cartItem := range cart.Items {
 		cartItemPresenter := CartItemPresenter{
