@@ -20,6 +20,7 @@ func NewRouter() *chi.Mux {
 		router.Post("/", actions.CreateCart)
 		router.Route("/{id}", func(router chi.Router) {
 			router.Get("/", actions.ShowCart)
+			router.Patch("/adjust_items", actions.AdjustCartItems)
 		})
 	})
 	router.Route("/cart_items", func(router chi.Router) {

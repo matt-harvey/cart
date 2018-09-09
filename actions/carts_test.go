@@ -38,6 +38,86 @@ func TestCreateCart(t *testing.T) {
 	}
 }
 
+func TestAdjustCartItemsCart(t *testing.T) {
+	conn := db.Conn()
+
+	// Initial creation of Cart
+	cart := models.Cart{}
+	err := conn.Create(&cart)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Set up Products
+	belts := models.Product{Name: "Belts", PriceCents: 2000}
+	conn.Create(&belts)
+	trousers := models.Product{Name: "Trousers", PriceCents: 7000}
+	conn.Create(&trousers)
+	socks := models.Product{Name: "Socks", PriceCents: 800}
+	conn.Create(&socks)
+
+	// Set up CartItems
+	trousersItem := models.CartItem{
+		CartID:    cart.ID,
+		ProductID: trousers.ID,
+		Quantity:  1,
+	}
+	err = conn.Create(&trousersItem)
+	if err != nil {
+		t.Fatal(err)
+	}
+	beltsItem := models.CartItem{
+		CartID:    cart.ID,
+		ProductID: belts.ID,
+		Quantity:  1,
+	}
+	err = conn.Create(&beltsItem)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// We set up two trousers items, to confirm this scenario is handled correctly.
+	otherTrousersItem := models.CartItem{
+		CartID:    cart.ID,
+		ProductID: trousers.ID,
+		Quantity:  2,
+	}
+	err = conn.Create(&otherTrousersItem)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Scenario: Add a product that's not in cart already
+	json := fmt.Sprintf(`{"product_id":%d,"quantity":5}`, socks.ID)
+	jsonReader := strings.NewReader(json)
+	initialCount, err := db.Conn().Count(models.CartItem{})
+	if err != nil {
+		t.Fatal("Error counting CartItems")
+	}
+
+	url := fmt.Sprintf("/carts/%d/adjust_items", cart.ID)
+	Log.Print("DEBUG url: ", url)
+	request, err := http.NewRequest("PATCH", url, jsonReader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	recorder := httptest.NewRecorder()
+	handler := http.HandlerFunc(AdjustCartItems)
+	ctx := chi.NewRouteContext()
+	ctx.URLParams.Add("id", fmt.Sprintf("%d", cart.ID))
+	request = request.WithContext(context.WithValue(request.Context(), chi.RouteCtxKey, ctx))
+	handler.ServeHTTP(recorder, request)
+
+	updatedCount, err := db.Conn().Count(models.CartItem{})
+	if err != nil {
+		t.Fatal("Error counting CartItems")
+	}
+	expectedCount := initialCount + 1
+	if updatedCount != expectedCount {
+		t.Fatalf("Count of CartItems, %d, does not match expected count of %d", updatedCount, expectedCount)
+	}
+
+}
+
 func TestShowCart(t *testing.T) {
 	conn := db.Conn()
 
