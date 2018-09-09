@@ -54,13 +54,16 @@ dbcreate:
 	echo Creating databases
 	soda create -a
 
+.PHONY: dbsetup
+dbsetup: dbcreate dbmigrate dbseed
+
 dbseed:
 	echo Seeding development database
 	sqlite3 /tmp/cart_development.sqlite < scripts/seed.sql && touch dbseed
 
 # TODO This should set up from schema, not by running all the migrations.
 .PHONY: dbreset
-dbreset: dbdrop dbcreate dbmigrate dbseed
+dbreset: dbdrop dbsetup
 
 vendor: Gopkg.toml Gopkg.lock
 	echo Installing dependencies

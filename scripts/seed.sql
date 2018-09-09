@@ -2,14 +2,14 @@
 -- initial data set.
 
 INSERT INTO products
-  (created_at, updated_at, name, price_cents)
+  (id, created_at, updated_at, name, price_cents)
 VALUES
-  (time('now'), time('now'), 'Belts', 2000),
-  (time('now'), time('now'), 'Shirts', 6000),
-  (time('now'), time('now'), 'Suits', 30000),
-  (time('now'), time('now'), 'Trousers', 7000),
-  (time('now'), time('now'), 'Shoes', 12000),
-  (time('now'), time('now'), 'Ties', 2000);
+  (1, time('now'), time('now'), 'Belts', 2000),
+  (2, time('now'), time('now'), 'Shirts', 6000),
+  (3, time('now'), time('now'), 'Suits', 30000),
+  (4, time('now'), time('now'), 'Trousers', 7000),
+  (5, time('now'), time('now'), 'Shoes', 12000),
+  (6, time('now'), time('now'), 'Ties', 2000);
 
 INSERT INTO transactions (created_at, updated_at) VALUES (time('now'), time('now'));
 
