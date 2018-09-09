@@ -30,7 +30,7 @@ func CreateCart(writer http.ResponseWriter, request *http.Request) {
 		Log.Print("DEBUG err: ", err)
 		return
 	}
-	// TODO Respond
+	// TODO Respond with something!
 }
 
 // "/cart/{id}/adjust_items"
@@ -125,6 +125,7 @@ func AdjustCartItems(writer http.ResponseWriter, request *http.Request) {
 		Log.Print("DEBUG err: ", err)
 		return
 	}
+	// TODO Respond with something!
 }
 
 // "/cart/{id}"
