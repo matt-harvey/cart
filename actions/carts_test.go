@@ -69,22 +69,15 @@ func TestAdjustCartItemsCart(t *testing.T) {
 	beltsItem := models.CartItem{
 		CartID:    cart.ID,
 		ProductID: belts.ID,
-		Quantity:  1,
+		Quantity:  7,
 	}
 	err = conn.Create(&beltsItem)
 	if err != nil {
 		t.Fatal(err)
 	}
-	// We set up two trousers items, to confirm this scenario is handled correctly.
-	otherTrousersItem := models.CartItem{
-		CartID:    cart.ID,
-		ProductID: trousers.ID,
-		Quantity:  2,
-	}
-	err = conn.Create(&otherTrousersItem)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	url := fmt.Sprintf("/carts/%d/adjust_items", cart.ID)
+	Log.Print("DEBUG url: ", url)
 
 	// Scenario: Add a product that's not in cart already
 	json := fmt.Sprintf(`{"product_id":%d,"quantity":5}`, socks.ID)
@@ -93,9 +86,6 @@ func TestAdjustCartItemsCart(t *testing.T) {
 	if err != nil {
 		t.Fatal("Error counting CartItems")
 	}
-
-	url := fmt.Sprintf("/carts/%d/adjust_items", cart.ID)
-	Log.Print("DEBUG url: ", url)
 	request, err := http.NewRequest("PATCH", url, jsonReader)
 	if err != nil {
 		t.Fatal(err)
@@ -106,7 +96,6 @@ func TestAdjustCartItemsCart(t *testing.T) {
 	ctx.URLParams.Add("id", fmt.Sprintf("%d", cart.ID))
 	request = request.WithContext(context.WithValue(request.Context(), chi.RouteCtxKey, ctx))
 	handler.ServeHTTP(recorder, request)
-
 	updatedCount, err := db.Conn().Count(models.CartItem{})
 	if err != nil {
 		t.Fatal("Error counting CartItems")
@@ -116,6 +105,96 @@ func TestAdjustCartItemsCart(t *testing.T) {
 		t.Fatalf("Count of CartItems, %d, does not match expected count of %d", updatedCount, expectedCount)
 	}
 
+	// Scenario: Increase the quantity of a product that's already in the cart
+	json = fmt.Sprintf(`{"product_id":%d,"quantity":5}`, trousers.ID)
+	jsonReader = strings.NewReader(json)
+	initialCount, err = db.Conn().Count(models.CartItem{})
+	if err != nil {
+		t.Fatal("Error counting CartItems")
+	}
+	request, err = http.NewRequest("PATCH", url, jsonReader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	request = request.WithContext(context.WithValue(request.Context(), chi.RouteCtxKey, ctx))
+	handler.ServeHTTP(recorder, request)
+
+	updatedCount, err = db.Conn().Count(models.CartItem{})
+	if err != nil {
+		t.Fatal("Error counting CartItems")
+	}
+	expectedCount = initialCount // Should not create a new cart item but should adjust the existing one.
+	if updatedCount != expectedCount {
+		t.Fatalf("Count of CartItems, %d, does not match expected count of %d", updatedCount, expectedCount)
+	}
+	err = db.Conn().Reload(&trousersItem)
+	if err != nil {
+		t.Fatal("Error reloading beltsItem")
+	}
+	expectedTrousersQuantity := uint(6)
+	actualTrousersQuantity := trousersItem.Quantity
+	if actualTrousersQuantity != expectedTrousersQuantity {
+		t.Fatalf("Quantity of trousers in cart, %d, does not match expected quantity of %d",
+			actualTrousersQuantity, expectedTrousersQuantity)
+	}
+
+	// Scenario: Decrease the quantity of a product that's already in the cart, by less than
+	// its existing quantity
+	json = fmt.Sprintf(`{"product_id":%d,"quantity":-2}`, belts.ID)
+	jsonReader = strings.NewReader(json)
+	initialCount, err = db.Conn().Count(models.CartItem{})
+	if err != nil {
+		t.Fatal("Error counting CartItems")
+	}
+	request, err = http.NewRequest("PATCH", url, jsonReader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	request = request.WithContext(context.WithValue(request.Context(), chi.RouteCtxKey, ctx))
+	handler.ServeHTTP(recorder, request)
+	updatedCount, err = db.Conn().Count(models.CartItem{})
+	if err != nil {
+		t.Fatal("Error counting CartItems")
+	}
+	expectedCount = initialCount // Should not create a new cart item but should adjust the existing one.
+	if updatedCount != expectedCount {
+		t.Fatalf("Count of CartItems, %d, does not match expected count of %d", updatedCount, expectedCount)
+	}
+	err = db.Conn().Reload(&beltsItem)
+	if err != nil {
+		t.Fatal("Error reloading beltsItem")
+	}
+	expectedBeltsQuantity := uint(5)
+	actualBeltsQuantity := beltsItem.Quantity
+	if actualBeltsQuantity != expectedBeltsQuantity {
+		t.Fatalf("Quantity of belts in cart, %d, does not match expected quantity of %d",
+			actualBeltsQuantity, expectedBeltsQuantity)
+	}
+
+	// Scenario: Decrease the quantity of a product that's already in the cart, by exactly its existing
+	// quantity.
+	json = fmt.Sprintf(`{"product_id":%d,"quantity":-5}`, belts.ID)
+	jsonReader = strings.NewReader(json)
+	initialCount, err = db.Conn().Count(models.CartItem{})
+	if err != nil {
+		t.Fatal("Error counting CartItems")
+	}
+	request, err = http.NewRequest("PATCH", url, jsonReader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	request = request.WithContext(context.WithValue(request.Context(), chi.RouteCtxKey, ctx))
+	handler.ServeHTTP(recorder, request)
+	updatedCount, err = db.Conn().Count(models.CartItem{})
+	if err != nil {
+		t.Fatal("Error counting CartItems")
+	}
+	expectedCount = initialCount - 1 // Should remote CartItem
+	if updatedCount != expectedCount {
+		t.Fatalf("Count of CartItems, %d, does not match expected count of %d", updatedCount, expectedCount)
+	}
+
+	// TODO Test invalid scenarios
 }
 
 func TestShowCart(t *testing.T) {

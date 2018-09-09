@@ -59,7 +59,24 @@ func AdjustCartItems(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	Log.Print("DEBUG")
-	if form.Quantity >= 0 {
+
+	// Has the Cart already got a CartItem for this Product?
+	productRepresented, err := db.Conn().
+		Where("product_id = ? AND cart_id = ?", form.ProductID, cartID).
+		Exists(&models.CartItem{})
+	if err != nil {
+		// TODO Handle this
+		Log.Print("DEBUG err: ", err)
+		return
+	}
+	if !productRepresented {
+		// Product not yet represented in Cart
+		if form.Quantity <= 0 {
+			// Can't add non-positive quantity
+			// TODO Respond with an error
+			Log.Print("DEBUG err: ", err)
+			return
+		}
 		cartItem := models.CartItem{
 			CartID:    cartID,
 			ProductID: form.ProductID,
@@ -70,8 +87,44 @@ func AdjustCartItems(writer http.ResponseWriter, request *http.Request) {
 			Log.Print("DEBUG err: ", err)
 			return
 		}
+		return // TODO Respond
 	}
-	// FIXME
+	// Product already represented in Cart
+	existingItem := models.CartItem{}
+	// TODO Shouldn't query again, as we've already done so above.
+	err = db.Conn().Where("product_id = ? AND cart_id = ?", form.ProductID, cartID).First(&existingItem)
+	if err != nil {
+		// TODO Handle this
+		Log.Print("DEBUG err: ", err)
+		return
+	}
+	var newQuantity uint
+	// Stuffing around due to inability to sidestep int/uint conversion issues.
+	// TODO What if new form.Quantity is outside int range?
+	if form.Quantity < 0 {
+		newQuantity = existingItem.Quantity - uint(-form.Quantity)
+	} else {
+		newQuantity = existingItem.Quantity + uint(form.Quantity)
+	}
+
+	if newQuantity < 0 {
+		// TODO Handle this -- we can't adjust quantity to less than zero.
+		// TODO But what if there are multiple CartItems in Cart for this Product?
+		Log.Print("DEBUG err: ", err)
+		return
+	}
+	if newQuantity == 0 {
+		// If there's no quantity, delete the CartItem entirely.
+		err = db.Conn().Destroy(&existingItem)
+	} else {
+		existingItem.Quantity = newQuantity
+		err = db.Conn().Update(&existingItem)
+	}
+	if err != nil {
+		// TODO Handle this
+		Log.Print("DEBUG err: ", err)
+		return
+	}
 }
 
 // "/cart/{id}"
