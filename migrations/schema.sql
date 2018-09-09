@@ -43,3 +43,14 @@ FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE cascade
 );
 CREATE INDEX "stock_entries_transaction_id_idx" ON "stock_entries" (transaction_id);
 CREATE INDEX "stock_entries_product_id_idx" ON "stock_entries" (product_id);
+CREATE TABLE IF NOT EXISTS "promotions" (
+"id" INTEGER PRIMARY KEY AUTOINCREMENT,
+"label" TEXT NOT NULL,
+"required_product_id" integer NOT NULL,
+"required_product_quantity" uint NOT NULL,
+"created_at" DATETIME NOT NULL,
+"updated_at" DATETIME NOT NULL,
+FOREIGN KEY (required_product_id) REFERENCES products (id) ON DELETE cascade
+);
+CREATE UNIQUE INDEX "promotions_label_idx" ON "promotions" (label);
+CREATE INDEX "promotions_required_product_id_idx" ON "promotions" (required_product_id);

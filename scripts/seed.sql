@@ -96,3 +96,38 @@ VALUES
     2000,
     1700
   );
+
+INSERT INTO promotions
+  (
+    label,
+    created_at,
+    updated_at,
+    required_product_id,
+    required_product_quantity
+  )
+VALUES
+  (
+    'trousers_belts_shoes',
+    time('now'),
+    time('now'),
+    (SELECT id FROM products WHERE name = 'Trousers'),
+    2
+  ),
+  (
+    'shirts_45',
+    time('now'),
+    time('now'),
+    (SELECT id FROM products WHERE name = 'Shirts'),
+    2
+  ),
+  (
+    'shirts_ties',
+    time('now'),
+    time('now'),
+    (SELECT id FROM products WHERE name = 'Shirts'),
+    3
+  );
+
+
+
+

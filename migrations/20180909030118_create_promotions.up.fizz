@@ -1,0 +1,9 @@
+create_table("promotions") {
+	t.Column("id", "integer", {"primary": true})
+	t.Column("label", "string", {})
+	t.Column("required_product_id", "integer", {})
+	t.Column("required_product_quantity", "uint", {})
+  t.ForeignKey("required_product_id", {"products": ["id"]}, {"on_delete": "cascade"})
+}
+add_index("promotions", "label", {"unique": true})
+add_index("promotions", "required_product_id", {})
